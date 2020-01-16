@@ -1,3 +1,6 @@
+# Project Internal, there is a testfolder (nice to have to try smth out) but do not share this stuff with the outside world ;)
+src/testarea/
+
 # exclude IDE settings
 .idea/
 
