@@ -1,0 +1,20 @@
+table {
+    max-width: 330px;
+}
+
+table tr {
+    height: 110px;
+}
+
+tr td {
+    height: 100%;
+    width: 110px;
+}
+
+td:hover {
+    background-color: #e8e8e8;
+}
+
+td div {
+     text-align:center;
+ }

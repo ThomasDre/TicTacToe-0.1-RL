@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" \ />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" \ />
+    <title>Test-Area for a RL Agent learning Tic-Tac-Toe</title>
+
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainpage.css') }}">
+    <!-- FontAwesome 5 -->
+    <script
+      src="https://kit.fontawesome.com/f4ca239cb3.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <main>
+      <h1 class="row justify-content-center">
+        Tic-Tac-Toe Class-Room For An RL Agent
+      </h1>
+      <hr \ />
+
+      <div class="container-fluid">
+        <div class="row justify-content-center">
+          <div class="col-8" id="gameColumn">
+            <div class="row justify-content-center">
+                <div class="btn-group">
+                    <button class="btn btn-primary px-4" onclick="agentMove()">
+                      Agent - Take First Move
+                    </button>
+                    <button class="btn btn-primary px-4" onclick="reset()">
+                      Reset Game-Board
+                    </button>
+                  </div>
+            </div>
+            <div class="row justify-content-center">
+              <table id="game_board" class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td id="cell_0_0" onclick="move('cell_0_0', 0, 0)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_0_1" onclick="move('cell_0_1', 0, 1)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_0_2" onclick="move('cell_0_2', 0, 2)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="cell_1_0" onclick="move('cell_1_0', 1, 0)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_1_1" onclick="move('cell_1_1', 1, 1)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_1_2" onclick="move('cell_1_2', 1, 2)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="cell_2_0" onclick="move('cell_2_0', 2, 0)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_2_1" onclick="move('cell_2_1', 2, 1)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                    <td id="cell_2_2" onclick="move('cell_2_2', 2, 2)">
+                      <div>
+                        <i
+                          class="far fa-circle fa-5x circle"
+                          style="display: none;"
+                        ></i>
+                        <i
+                          class="fas fa-times fa-5x cross"
+                          style="display: none;"
+                        ></i>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-center mb-2">
+                <div class="custom-control custom-control-switch">
+                    <input name="toggler" type="checkbox" class="custom-control-input" id="modeToggle"\>
+                    <label class="custom-control-label" for="modeToggle">
+                        Activate Evaluation Mode
+                    </label>
+                </div>
+            </div>
+            <div class="alert alert-success" role="alert" id="successAlert" style="display: none">
+              You have won this game!!!
+            </div>
+            <div class="alert alert-warning" role="alert" id="drawAlert" style="display: none">
+              The game ended with a draw...
+            </div>
+            <div class="alert alert-danger" role="alert" id="lossAlert" style="display: none">
+              You have lost the game!!!
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="row justify-content-center" id="trainingSection">
+            <form>
+              <div class="form-group">
+                <label for="trainingSelectionChoice">
+                  Select Training Period (Episoden)
+                </label>
+                <select class="form-control" id="trainingSelectionChoice">
+                  <option>1000</option>
+                  <option>10000</option>
+                  <option>100000</option>
+                  <option>1000000</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="trainAgent()">Start Training</button>
+            </form>
+          </div>
+      </div>
+    </main>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // this represents the tic-tac-toe environment
+      // will be synchronized with browser interaction and backend moves (i.e. agent moves)
+      function initGameBoard() {
+        let tmp = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+
+        return tmp;
+      }
+
+      var gameBoard = initGameBoard();
+      var terminated = false;
+
+      function reset() {
+        // clears the "visual gameBoard" and sends reset command to backend
+        // after normal termination, the game environment will reset itself
+        // but can be used to reset the game any time
+
+        terminated = false;
+
+        document
+          .querySelectorAll("i.circle , i.cross")
+          .forEach(function(currentValue, currentIndex, listObj) {
+            currentValue.setAttribute("style", "display:none");
+          });
+
+        document.querySelectorAll("div.alert").forEach(function(currentValue, currentIndex, listObj) {
+          currentValue.setAttribute('style', 'display: none');
+        })
+
+        console.log(gameBoard);
+        gameBoard = initGameBoard();
+        console.log(gameBoard);
+
+        $.get('reset', function() {
+            // server return is simply 200 'ok'
+        })
+      }
+
+      function agentMove() {
+        $.get('move/agent', function(data) {
+        
+        }).done(function(data) {
+          let lastStep = JSON.parse(data);
+          let moveX = parseInt(lastStep['x']);
+          let moveY = parseInt(lastStep['y']);
+          gameBoard[moveX][moveY] = 4;
+          // visualize a cross for agent
+          let cell_id = 'cell_' + moveX + '_' + moveY;
+          document.querySelectorAll("#" + cell_id + " i.cross")[0].setAttribute("style", "display");
+        }).fail(function() {
+          console.log('Agent has already moved');
+        });
+      }
+
+      function move(id, x, y) {
+        // valid move, so mark cell and request agent move, else wait for valid move
+        if (!terminated && gameBoard[x][y] == 0) {
+          document
+          .querySelectorAll("#" + id + " i.circle")[0]
+          .setAttribute("style", "display");
+          gameBoard[x][y] = 1;
+          var move = {'x': x, 'y': y};
+          move = JSON.stringify(move)
+          console.log(move);
+          $.post('move/user', move, function(data) {
+              // get agent move and mark cell with agent's encoding "4"
+              console.log('Hey: ' + data)
+              let lastStep = JSON.parse(data);
+              let moveX = parseInt(lastStep['x']);
+              let moveY = parseInt(lastStep['y']);
+              let hasGameEnded = lastStep['end'];
+              let gameWon = lastStep['won'];
+
+
+              // display info for result
+              if (hasGameEnded == 'True') {
+                terminated = true;
+
+                if (gameWon == 'True') {
+                    document.querySelectorAll('#successAlert')[0].setAttribute('style', 'display');
+                  } else if (gameWon == 'False') {
+                    document.querySelectorAll('#lossAlert')[0].setAttribute('style', 'display');
+                  } else if (gameWon == 'Undefined') {
+                    document.querySelectorAll('#drawAlert')[0].setAttribute('style', 'display');
+                  } else {
+                    console.log('Oooooooooooooooooppppppppppppppssssssss');
+                  }
+              }
+
+              if (moveX == -1 || moveY == -1) {
+                 // pass, -1 represents dummy values 'dont render them'
+              }
+              // visualize agent move (if we have won, the agent did not perform any move)
+              else if (gameWon != 'True') {
+                console.log(moveX + ' ' + moveY);
+                gameBoard[moveX][moveY] = 4;
+                // visualize a cross for agent
+                let cell_id = 'cell_' + moveX + '_' + moveY;
+                document.querySelectorAll("#" + cell_id + " i.cross")[0].setAttribute("style", "display");
+              }              
+          });
+        }
+      }
+
+      function trainAgent() {
+        let select = document.getElementById('trainingSelectionChoice');
+        let episodeChoice = select.options[select.selectedIndex].value;
+
+        console.log('AHA:')
+        console.log(episodeChoice);
+
+        data = {
+         episodes: episodeChoice
+        }
+
+        $.post('train', data, function() {
+          console.log('Something happened');
+        }).done(function() {
+          console.log('Training is done');
+        }).fail(function(err) {
+          console.log('Something went wrong: ' + err);
+        });
+      }
+
+
+    </script>
+  </body>
+</html>
