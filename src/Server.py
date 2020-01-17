@@ -16,6 +16,7 @@ from flask import Flask, request, render_template, make_response
 from custom_env.tictactoe.envs.tictactoe_env import TicTacToeEnv
 from src.agents.base.SillyAgent import SillyAgent
 from custom_env.tictactoe import strategy
+from src.utils import util
 
 app = Flask(__name__)
 
@@ -46,18 +47,20 @@ def get_user_move():
     global first_move
     first_move = False
     data = request.get_json(force=True)
-    obs, reward, done, info = game_environment.take_a_move(tuple((data['x'], data['y'])))
+    user_move = util.map_cell_to_scalar(data['x'], data['y'])
+    obs, reward, done, info = game_environment.take_a_move(user_move)
 
     if done:
         response_text = response_text_template.format(-1, -1, True, True if reward == 1 else 'Undefined')
         # debug(is_human=True, obs=obs, reward=reward, done=done, response=response_text)
     else:
         action, obs, reward, done, info = agent.action()
+        agent_move_x, agent_move_y = util.map_scalar_to_cell(action)
 
         if done:
-            response_text = response_text_template.format(action[0], action[1], True, False if reward == 1 else 'Undefined')
+            response_text = response_text_template.format(agent_move_x, agent_move_y, True, False if reward == 1 else 'Undefined')
         else:
-            response_text = response_text_template.format(action[0], action[1], False, 'Undefined')
+            response_text = response_text_template.format(agent_move_x, agent_move_y, False, 'Undefined')
         # debug(is_human=False, obs=obs, reward=reward, done=done,response=response_text)
 
     if done:
@@ -73,10 +76,11 @@ def force_agent_move():
     if first_move:
         first_move = False
         action, obs, reward, done, info = agent.action()
+        agent_move_x, agent_move_y = util.map_scalar_to_cell(action)
 
         # debug(False, obs=obs, reward=reward, done=done)
 
-        response_text = response_text_template.format(action[0], action[1], False, 'Undefined')
+        response_text = response_text_template.format(agent_move_x, agent_move_y, False, 'Undefined')
         return make_response(response_text, 200)
 
     return make_response('Failure', 400)
