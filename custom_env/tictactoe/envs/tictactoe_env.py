@@ -1,6 +1,7 @@
 import gym
 from gym import spaces
 from gym.error import ResetNeeded
+from src.utils import util
 
 import numpy as np
 import random
@@ -11,9 +12,10 @@ class TicTacToeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
     reward_range = (-1, 1)
 
-    action_space = spaces.Tuple((spaces.Discrete(3), spaces.Discrete(3)))
+    # action_space = spaces.Tuple((spaces.Discrete(3), spaces.Discrete(3)))
     # action_space = spaces.Box(low=0.0, high=2.0, shape=(1, 2), dtype='int')
     # probably bullshit line, i don t know myself what im doing
+    action_space = spaces.Discrete(9)
     observation_space = spaces.Box(low=0.0, high=4.0, shape=(3, 3), dtype='int')
 
     """
@@ -53,15 +55,14 @@ class TicTacToeEnv(gym.Env):
         """
         One move on the TicTacToe board is performed
 
-        :type action: tuple (x, y) representing which cell should be marked
+        :type action [0;8] where this corresponds to the cell that should be marked by this move
         :return <observation, reward, done, info>
         info := {
             'illegal': Boolean,
             'human': Boolean
         }
         """
-        row = action[0]
-        column = action[1]
+        row, column = util.map_scalar_to_cell(action)
 
         if TicTacToeEnv._hasEnded:
             raise ResetNeeded()
@@ -155,11 +156,10 @@ class TicTacToeEnv(gym.Env):
         This method is meant to be used for clients that play against the agent to take their moves.
         Clients (Human-player, bots)
 
-        :param action: tuple(x,y) that represents the cell to be marked
+        :type action [0;8] where this corresponds to the cell that should be marked by this move
         :return: <observation, reward, done, info>
         """
-        row = action[0]
-        column = action[1]
+        row, column = util.map_scalar_to_cell(action)
 
         if TicTacToeEnv._hasEnded:
             raise ResetNeeded()
@@ -206,17 +206,14 @@ class TicTacToeEnv(gym.Env):
         respect to current game state)
 
           0 1 2
-        0 A B C
-        1 D E F
-        2 G H I
-
-        action 'x' defines assigning its own sign ("circle", "cross", respectively encoded as 1 and 4) to corresponding
-        slot
+        0 0 1 2
+        1 3 4 5
+        2 6 7 8
 
         :return: array of possible actions
         """
 
-        return [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+        return [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
     @staticmethod
     def get_sampled_action():
