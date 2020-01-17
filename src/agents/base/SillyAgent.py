@@ -50,6 +50,3 @@ class SillyAgent(RlAgent):
 if __name__ == '__main__':
     agent = SillyAgent()
     agent.run()
-    print(agent.env.observation_space)
-    print(agent.env.action_space)
-

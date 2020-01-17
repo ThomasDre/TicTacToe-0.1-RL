@@ -1,3 +1,12 @@
+"""
+
+legacy file, not needed anymore probably
+Same Content now implemented inside custom_env/tictactoe/envs/tictactoe_env.py
+delete it eventually if not not used somewhere else
+
+"""
+
+
 import numpy
 import random
 
@@ -52,8 +61,7 @@ class GameEnvironment:
         and game status thereafter
 
         :param is_agent: move by agent or opponent
-        :param row: selected row
-        :param column: selected column
+        :param move tuple(x,y) where x and y represent the cells thar are being marked by this move
         :return: duple of <'observation','HasGameEnded','Reward', 'InvalidMove'>
         """
         row = move[0]
@@ -108,7 +116,7 @@ class GameEnvironment:
         # no winner, but all moves were made
         elif 0 not in GameEnvironment.game_board:
             GameEnvironment.terminate_episode()
-            return GameEnvironment.game_board,True, GameEnvironment.DRAW_REWARD, False
+            return GameEnvironment.game_board, True, GameEnvironment.DRAW_REWARD, False
         # no winner, still moves to be made
         else:
             return GameEnvironment.game_board, False, 0, False
