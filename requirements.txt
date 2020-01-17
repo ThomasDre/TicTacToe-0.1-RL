@@ -1,3 +1,6 @@
+numpy
+rl
+keras
 # check this dependendies, some seem to be unnecessary
 certifi==2019.9.11
 chardet==3.0.4
