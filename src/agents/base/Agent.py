@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from custom_env.tictactoe.envs import TicTacToeEnv
+from env.tictactoe.envs import TicTacToeEnv
 
 
 class Agent(ABC):

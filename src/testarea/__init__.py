@@ -5,7 +5,7 @@ Test area means test area, nothing here is intended to make sense!
 """
 
 import gym
-from custom_env import tictactoe
+from env import tictactoe
 
 env = gym.make('tictactoe-v0')
 

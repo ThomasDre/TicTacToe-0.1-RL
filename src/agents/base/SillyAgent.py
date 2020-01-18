@@ -1,5 +1,5 @@
 from src.agents.base.Agent import RlAgent
-from custom_env.tictactoe import strategy
+from env.tictactoe import strategy
 
 
 class SillyAgent(RlAgent):

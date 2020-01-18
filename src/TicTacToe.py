@@ -1,7 +1,7 @@
 """
 
 legacy file, not needed anymore probably
-Same Content now implemented inside custom_env/tictactoe/envs/tictactoe_env.py
+Same Content now implemented inside env/tictactoe/envs/tictactoe_env.py
 delete it eventually if not not used somewhere else
 
 """
