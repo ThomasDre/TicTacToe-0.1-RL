@@ -14,14 +14,14 @@ interactive game during a game-session
 from flask import Flask, request, render_template, make_response
 
 from custom_env.tictactoe.envs.tictactoe_env import TicTacToeEnv
-from src.agents.base.SillyAgent import SillyAgent
+from src.agents.base.RandomAgent import RandomAgent
 from custom_env.tictactoe import strategy
 from src.utils import util
 
 app = Flask(__name__)
 
 game_environment = TicTacToeEnv()
-agent = SillyAgent()
+agent = RandomAgent()
 
 first_move = True
 response_text_template = '{{\"x\": {}, \"y\": {}, \"end\": \"{}\", \"won\": \"{}\"}}'
@@ -54,7 +54,7 @@ def get_user_move():
         response_text = response_text_template.format(-1, -1, True, True if reward == 1 else 'Undefined')
         # debug(is_human=True, obs=obs, reward=reward, done=done, response=response_text)
     else:
-        action, obs, reward, done, info = agent.action()
+        action, obs, reward, done, info = agent.action(obs)
         agent_move_x, agent_move_y = util.map_scalar_to_cell(action)
 
         if done:
@@ -75,7 +75,8 @@ def force_agent_move():
     global first_move
     if first_move:
         first_move = False
-        action, obs, reward, done, info = agent.action()
+        obs = game_environment.reset()
+        action, obs, reward, done, info = agent.action(obs)
         agent_move_x, agent_move_y = util.map_scalar_to_cell(action)
 
         # debug(False, obs=obs, reward=reward, done=done)
