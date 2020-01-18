@@ -18,37 +18,52 @@ class KerasAgent(RlAgent):
         super(KerasAgent, self).__init__()
         self.env.reset()
         self.env.set_opponent(strategy.random_bot)
+        self.agent = None
 
     def run(self):
-        model = self.agent()  # agent(3, 2)
+        model = KerasAgent.create_model()
         policy = EpsGreedyQPolicy()
-        sarsa = SARSAAgent(model=model, policy=policy, nb_actions=9)
-        sarsa.compile('adam', metrics=['mse'])
-        sarsa.fit(env=self.env, nb_steps=1000, visualize=False, verbose=1)
+        sarsa = KerasAgent.create_agent(model=model, policy=policy)
+        sarsa.fit(env=self.env, nb_steps=50000, visualize=False, verbose=1)
         sarsa.save_weights('../../../training/keras/keras-sarsa_base_50000.h5f', True)
 
-    def action(self):
-        pass
+    def action(self, obs, training=False):
+        # if no agent existent (no training run performed and no existing agent loaded) then create vanilla agent
+        if self.agent is None:
+            model = KerasAgent.create_model()
+            policy = EpsGreedyQPolicy()
+            self.agent = KerasAgent.create_agent(model=model, policy=policy)
+
+        # activate training mode of agent
+        # BEWARE: class member is changed
+        if training:
+            self.agent.training = True
+        else:
+            self.agent.training = False
+
+        return self.agent.forward(obs)
+
+    def load_agent(self, filename):
+        model = KerasAgent.create_model()
+        policy = EpsGreedyQPolicy()
+        self.agent = KerasAgent.create_agent(model=model, policy=policy)
+        self.agent.load_weights(filename)
 
     @staticmethod
-    def agent():
-        """
-
-        Consider that this class is currently not completed.
-        For any state, action representation coming in, the best available response is picked from the trained
-        network.
-
-
-        :param states: the number of states the environment can be in
-        :param actions: the number of available action at each timestep
-        :return:
-        """
+    def create_model():
         model = Sequential()
         model.add(Flatten(input_shape=(1, 3, 3)))
-        model.add(Dense(16, activation='relu'))
-        model.add(Dense(9, activation='softmax', input_shape=(1, 3, 3)))
-
+        # model.add(Dense(16, activation='relu'))
+        model.add(Dense(9, activation='relu'))
+        # model.add(Dense(6, activation='relu'))
+        model.add(Dense(9, activation='softmax'))
         return model
+
+    @staticmethod
+    def create_agent(model, policy):
+        new_agent = SARSAAgent(model=model, policy=policy, nb_actions=9)
+        new_agent.compile('adam', metrics=['mse'])
+        return new_agent
 
 
 if __name__ == '__main__':
@@ -63,8 +78,4 @@ if __name__ == '__main__':
     print(agent.env.observation_space.shape)
     print(agent.env.observation_space.shape[0])
     print(agent.env.action_space)
-
     print("Look at the model")
-
-
-
