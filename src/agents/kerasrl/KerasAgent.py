@@ -4,6 +4,9 @@ from env.tictactoe import strategy
 from keras.layers import Dense, Flatten
 from keras.models import Sequential
 from rl.agents import SARSAAgent
+from rl.agents import CEMAgent
+from rl.agents import DQNAgent
+from rl.memory import SequentialMemory
 from rl.policy import EpsGreedyQPolicy
 
 
@@ -52,16 +55,25 @@ class KerasAgent(RlAgent):
     @staticmethod
     def create_model():
         model = Sequential()
+        # input shape corresponds to (batchSize, x, y, z, ...dimension...)
+        # however, batchSize is skipped as keras can deal with any batch size (with batch_size=... one can specify it)
+        # which means that here we define a 3d input
+        # TODO which rises the question: WHY IS THE INPUT / OBS 3D?!?!?
         model.add(Flatten(input_shape=(1, 3, 3)))
         # model.add(Dense(16, activation='relu'))
         model.add(Dense(9, activation='relu'))
-        # model.add(Dense(6, activation='relu'))
+        model.add(Dense(32, activation='relu'))
+        model.add(Dense(16, activation='relu'))
         model.add(Dense(9, activation='softmax'))
         return model
 
     @staticmethod
     def create_agent(model, policy):
         new_agent = SARSAAgent(model=model, policy=policy, nb_actions=9)
+        # TODO memory causes error with limit param
+        # memory = SequentialMemory(window_length=1, limit=2000)
+        # DQNAgent despite official doc that says otherwise only usable by specifying memory
+        # new_agent = DQNAgent(model=model, policy=policy, nb_actions=9, memory=memory)
         new_agent.compile('adam', metrics=['mse'])
         return new_agent
 
