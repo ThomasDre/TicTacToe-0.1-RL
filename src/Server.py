@@ -13,9 +13,9 @@ interactive game during a game-session
 
 from flask import Flask, request, render_template, make_response
 
-from custom_env.tictactoe.envs.tictactoe_env import TicTacToeEnv
+from env.tictactoe.envs.tictactoe_env import TicTacToeEnv
 from src.agents.base.RandomAgent import RandomAgent
-from custom_env.tictactoe import strategy
+from env.tictactoe import strategy
 from src.utils import util
 
 app = Flask(__name__)
