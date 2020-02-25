@@ -25,6 +25,7 @@ class Agent(ABC):
         """
         pass
 
+        """
 
 class RlAgent(Agent):
     """
@@ -38,6 +39,8 @@ class RlAgent(Agent):
 
     def __init__(self):
         super(RlAgent, self).__init__()
+        self.episodes = 100000
+        self.filename = None
 
     @abstractmethod
     def run(self):
@@ -55,6 +58,20 @@ class RlAgent(Agent):
         Has to be evoked in order to perform best available actions!
 
         :param filename: name of the file that holds the training data
-        :return:
         """
         pass
+
+
+    def set_episodes(self, episodes):
+        """
+        Sets the number of episodes this agent is meant to be trained
+        """
+        self.episodes = episodes
+
+
+    def set_filename(self, filename):
+        """
+        Sets a specific filename for the training data thar are saved after a complete training.
+        @:param filename of the training data (only leading name) (i.e. the type can not be specified)
+        """
+        self.filename = filename
