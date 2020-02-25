@@ -25,7 +25,13 @@ class Agent(ABC):
         """
         pass
 
+    def get_env(self):
         """
+
+        :return: the underlying environment is returned
+        """
+        return self.env
+
 
 class RlAgent(Agent):
     """
