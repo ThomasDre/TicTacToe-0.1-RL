@@ -8,6 +8,7 @@ from rl.agents import CEMAgent
 from rl.agents import DQNAgent
 from rl.memory import SequentialMemory
 from rl.policy import EpsGreedyQPolicy
+import src.exceptions as exception
 
 
 class KerasAgent(RlAgent):
@@ -27,7 +28,7 @@ class KerasAgent(RlAgent):
         model = KerasAgent.create_model()
         policy = EpsGreedyQPolicy()
         sarsa = KerasAgent.create_agent(model=model, policy=policy)
-        sarsa.fit(env=self.env, nb_steps=50000, visualize=False, verbose=1)
+        sarsa.fit(env=self.env, nb_steps=self.episodes, visualize=True, verbose=1)
         sarsa.save_weights('../../../training/keras/keras-sarsa_base_50000.h5f', True)
 
     def action(self, obs, training=False):
@@ -50,20 +51,15 @@ class KerasAgent(RlAgent):
         model = KerasAgent.create_model()
         policy = EpsGreedyQPolicy()
         self.agent = KerasAgent.create_agent(model=model, policy=policy)
-        self.agent.load_weights(filename)
+        try:
+            self.agent.load_weights(filename)
+        except OSError:
+            raise exception.AgentDataNotAvailable()
 
     @staticmethod
     def create_model():
         model = Sequential()
-        # input shape corresponds to (batchSize, x, y, z, ...dimension...)
-        # however, batchSize is skipped as keras can deal with any batch size (with batch_size=... one can specify it)
-        # which means that here we define a 3d input
-        # TODO which rises the question: WHY IS THE INPUT / OBS 3D?!?!?
         model.add(Flatten(input_shape=(1, 3, 3)))
-        # model.add(Dense(16, activation='relu'))
-        model.add(Dense(9, activation='relu'))
-        model.add(Dense(32, activation='relu'))
-        model.add(Dense(16, activation='relu'))
         model.add(Dense(9, activation='softmax'))
         return model
 
